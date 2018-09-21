@@ -16,7 +16,7 @@ pipeline {
                     echo "M2_HOME = ${M2_HOME}"
                 '''
                 script{
-                    server = Artifactory.server('local-artifactory')
+                    
                     rtMaven = Artifactory.newMavenBuild()
                     rtMaven.deployer.deployArtifacts = false
                     rtMaven.tool = 'maven-3.5.4'
@@ -42,6 +42,7 @@ pipeline {
         stage('Publish'){
             steps{
                 script{
+                    server = Artifactory.server('local-artifactory')
                     rtMaven.deployer.deployArtifacts buildInfo
                     server.publishBuildInfo buildInfo
 
