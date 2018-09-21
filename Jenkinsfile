@@ -21,7 +21,7 @@ pipeline {
                     def rtMaven = Artifactory.newMavenBuild()
                     rtMaven.deployer.deployArtifacts = false
                     rtMaven.tool = 'maven-3.5.4'
-                    def buildInfo = rtMaven.run pom: 'maven-example/pom.xml', goals: 'clean install'
+                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install'
                 }
             }
             post {
