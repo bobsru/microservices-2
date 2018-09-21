@@ -16,8 +16,12 @@ pipeline {
                     echo "M2_HOME = ${M2_HOME}"
                 '''
                 script{
-                    
+                    server = Artifactory.newServer url: 'http://localhost:8081/artifactory', username: 'admin', password: 'admin'
                     rtMaven = Artifactory.newMavenBuild()
+                    rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
+                    rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
+                    
+
                     rtMaven.deployer.deployArtifacts = false
                     rtMaven.tool = 'maven-3.5.4'
                     
@@ -42,7 +46,7 @@ pipeline {
         stage('Publish'){
             steps{
                 script{
-                    server = Artifactory.newServer url: 'http://localhost:8081/artifactory', username: 'admin', password: 'admin'
+                    
                     rtMaven.deployer.deployArtifacts buildInfo
                     server.publishBuildInfo buildInfo
 
