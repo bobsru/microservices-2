@@ -42,7 +42,7 @@ pipeline {
         stage('Publish'){
             steps{
                 script{
-                    server = Artifactory.server('local-artifactory')
+                    server = Artifactory.newServer url: 'http://localhost:8081/artifactory', username: 'admin', password: 'admin'
                     rtMaven.deployer.deployArtifacts buildInfo
                     server.publishBuildInfo buildInfo
 
