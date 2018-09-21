@@ -18,7 +18,7 @@ pipeline {
                 script{
                     server = Artifactory.newServer url: 'http://localhost:8081/artifactory', username: 'admin', password: 'admin'
                     rtMaven = Artifactory.newMavenBuild()
-                    rtMaven.resolver server: server, releaseRepo: 'libs-release', snapshotRepo: 'libs-snapshot'
+                    rtMaven.resolver server: server, releaseRepo: 'all-repo', snapshotRepo: 'all-repo'
                     rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
                     
 
