@@ -3,6 +3,11 @@ pipeline {
     tools {
         jdk 'jdk8'
     }
+    environment{
+        server = null
+        rtMaven = null
+        buildInfo = null
+    }
     stages {
         stage ('Initialize') {
             steps {
@@ -10,6 +15,13 @@ pipeline {
                     echo "PATH = ${PATH}"
                     echo "M2_HOME = ${M2_HOME}"
                 '''
+                script{
+                    server = Artifactory.server('local-artifactory')
+                    rtMaven = Artifactory.newMavenBuild()
+                    rtMaven.deployer.deployArtifacts = false
+                    rtMaven.tool = 'maven-3.5.4'
+                    
+                }
             }
             
         }
@@ -17,11 +29,8 @@ pipeline {
         stage ('Build') {
             steps {
                 script{
-                    def server = Artifactory.server('local-artifactory')
-                    def rtMaven = Artifactory.newMavenBuild()
-                    rtMaven.deployer.deployArtifacts = false
-                    rtMaven.tool = 'maven-3.5.4'
-                    def buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install'
+                    
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install'
                 }
             }
             post {
