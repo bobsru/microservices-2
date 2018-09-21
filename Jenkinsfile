@@ -1,7 +1,6 @@
 pipeline {
     agent any
     tools {
-        maven 'maven-3.5.4'
         jdk 'jdk8'
     }
     stages {
@@ -12,15 +11,31 @@ pipeline {
                     echo "M2_HOME = ${M2_HOME}"
                 '''
             }
+            
         }
 
         stage ('Build') {
             steps {
-                sh 'mvn -Dmaven.test.failure.ignore=true install' 
+                script{
+                    def server = Artifactory.server('local-artifactory')
+                    def rtMaven = Artifactory.newMavenBuild()
+                    rtMaven.deployer.deployArtifacts = false
+                    rtMaven.tool = 'maven-3.5.4'
+                    def buildInfo = rtMaven.run pom: 'maven-example/pom.xml', goals: 'clean install'
+                }
             }
             post {
                 success {
                     junit 'target/surefire-reports/**/*.xml' 
+                }
+            }
+        }
+        stage('Publish'){
+            steps{
+                script{
+                    rtMaven.deployer.deployArtifacts buildInfo
+                    server.publishBuildInfo buildInfo
+
                 }
             }
         }
